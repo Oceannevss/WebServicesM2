@@ -1,15 +1,15 @@
 ﻿module MappingType
 
-type Groupes = {}
+type Groupes = { Name: string }
 
-and Channels = {}
+and Channels = { Name: string }
 
-and Messages = {}
+and Messages = { Content: string }
 
-and Members = {}
+and Members = { Name: string }
 
-and Documents = {}
+and Documents = { Title: string }
 
-and Permissions = {}
+and Permissions = { Role: string }
 
-and Workspaces = {}
+and Workspaces = { Name: string }

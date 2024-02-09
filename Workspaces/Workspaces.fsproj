@@ -5,11 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Model\MappingType.fs" />
+    <Compile Include="Model\MappingType.fs" />   <!-- Erreur de compilation avec ce fichier ci-dessus // CORRIGE -->
     <Compile Include="Model\Database.fs" />
     <Compile Include="WeatherForecast.fs" />
     <Compile Include="Controllers/WeatherForecastController.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5" />
   </ItemGroup>
 
 </Project>
