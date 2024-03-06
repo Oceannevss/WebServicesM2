@@ -8,8 +8,20 @@
     <Compile Include="Model\MappingType.fs" />
     <Compile Include="Model\Database.fs" />
     <Compile Include="WeatherForecast.fs" />
+    <Compile Include="Controllers\WorkspacesController.fs" />
     <Compile Include="Controllers/WeatherForecastController.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.1.28" />
+    <PackageReference Include="Dapper.FSharp" Version="4.7.0" />
+    <PackageReference Include="MySqlConnector" Version="2.3.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Messaging\Messaging.fsproj" />
+    <ProjectReference Include="..\RightsManagement\RightsManagement.fsproj" />
   </ItemGroup>
 
 </Project>
