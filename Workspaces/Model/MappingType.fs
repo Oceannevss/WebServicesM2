@@ -22,12 +22,12 @@ type Documents = {
 
 [<CLIMutable>]
 type Workspaces = {
-    Id: int 
+    Id: int option
     Name: string
     Creation_date: DateOnly
     Members_nbr: int
     Groups_nbr: int
-    Id_creator: int
+    Id_creator: int option
 }
 
 

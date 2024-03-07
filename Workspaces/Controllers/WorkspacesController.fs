@@ -27,7 +27,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
             }
 
     [<HttpGet"{id}">]
-    member this.Get(id: int) =
+    member this.Get(id: int option) =
         task
             {   
                 try
@@ -55,12 +55,12 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpPut>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.UpdateWorkspace(workspacename: string, groupname: string, members: Members List) =
+    member this.UpdateWorkspace(workspace: Workspaces) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! model = Database.updateWorkspaces conn input
+                    let! model = Database.updateWorkspaces conn workspace
                     return
                         model
                 with 
@@ -69,7 +69,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpDelete"{id}">]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.DeleteWorkspace(id: int) =
+    member this.DeleteWorkspace(id: int option) =
         task
             {
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
