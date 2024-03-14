@@ -1,14 +1,14 @@
-﻿namespace Workspaces.tables
+﻿namespace Mapping.tables
 
 open System
 
 [<CLIMutable>]
-type Groupes = {
-    Id: int
+type Groups = {
+    Id: int option
     Name: string
     Description: string
     Creation_date: DateOnly
-    Id_workspace: int
+    Id_workspace: int option
 }
 
 [<CLIMutable>]
@@ -28,6 +28,29 @@ type Workspaces = {
     Members_nbr: int
     Groups_nbr: int
     Id_creator: int option
+}
+
+[<CLIMutable>]
+type WorkspaceGroups = {
+    Id_workspace: int option
+    Id_group: int option
+}
+
+[<CLIMutable>]
+type Members = {
+
+    Id: int
+    Fistname: string
+    Lastname: string
+    Mail: string
+    Id_permission: int
+}
+
+[<CLIMutable>]
+type Permissions = {
+
+    Id:int
+    Permission: string 
 }
 
 

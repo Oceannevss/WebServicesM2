@@ -5,11 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Model\MappingType.fs" />
-    <Compile Include="Model\Database.fs" />
-    <Compile Include="WeatherForecast.fs" />
     <Compile Include="Controllers\WorkspacesController.fs" />
-    <Compile Include="Controllers/WeatherForecastController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

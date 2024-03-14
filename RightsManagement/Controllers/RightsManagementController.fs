@@ -1,14 +1,15 @@
-﻿module WorkspacesController
+﻿module RightsManagementController
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
+open RightsManagement.tables
 open MySqlConnector
 open Microsoft.AspNetCore.Http
-open Mapping.tables
+open Database
 
 [<ApiController>]
-[<Route("workspaces")>]
-type WorkspacesController (logger : ILogger<WorkspacesController>) =
+[<Route("rights")>]
+type RightsManagementController (logger : ILogger<RightsManagementController>) =
     inherit ControllerBase()
 
     [<HttpGet>]
@@ -17,9 +18,9 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! get = Database.getWorkspaces conn
+                    let! model = Database.getRights conn
                     return
-                        get
+                        model
                 with 
                     | error -> return error |> raise
             }
@@ -30,49 +31,48 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! getById = Database.getWorkspacesById conn id
+                    let! model = Database.getRightById conn id
                     return
-                        getById
+                        model
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.PostWorkspace(workspace: Workspaces) =
+    member this.PostRight(permission: Permissions) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! post = Database.postWorkspaces conn workspace
+                    let! model = Database.postRight conn permission
                     return
-                        post
+                        model
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpPut>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.UpdateWorkspace(workspace: Workspaces) =
+    member this.UpdateRightMember(memberId: int ,rightId: int) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! update = Database.updateWorkspaces conn workspace
+                    let! model = Database.updateRight conn workspace
                     return
-                        update
+                        model
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpDelete"{id}">]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.DeleteWorkspace(id: int option) =
+    member this.DeleteRightMember(MemberId: int option) =
         task
             {
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                let! delete = Database.deleteWorkspaces conn id
+                let! model = Database.deleteWorkspaces conn id
                 return
-                    delete
+                    model
             }
-
