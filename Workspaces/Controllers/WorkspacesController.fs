@@ -9,7 +9,8 @@ open WebServiceM2Lib.Database
 
 [<ApiController>]
 //[ApiVersion("1.0")]
-[<Route("api/{v:apiVersion}/workspaces")>]
+//{v:apiVersion}
+[<Route("api/workspaces")>]
 type WorkspacesController (logger : ILogger<WorkspacesController>) =
     inherit ControllerBase()
 

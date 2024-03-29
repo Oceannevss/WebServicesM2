@@ -6,6 +6,10 @@ open MySqlConnector
 open Microsoft.AspNetCore.Http
 open WebServiceM2Lib.Mapping.tables
 open WebServiceM2Lib.Database
+open RabbitMQ.Client
+open RabbitMQ.Client.Events
+open System
+open System.Text
 
 [<ApiController>]
 [<Route("rights")>]
