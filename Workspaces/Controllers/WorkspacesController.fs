@@ -1,13 +1,15 @@
-﻿module WorkspacesController
+﻿namespace Workspaces.Controllers
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open MySqlConnector
 open Microsoft.AspNetCore.Http
-open Mapping.tables
+open WebServiceM2Lib.Mapping.tables
+open WebServiceM2Lib.Database
 
 [<ApiController>]
-[<Route("workspaces")>]
+//[ApiVersion("1.0")]
+[<Route("api/{v:apiVersion}/workspaces")>]
 type WorkspacesController (logger : ILogger<WorkspacesController>) =
     inherit ControllerBase()
 

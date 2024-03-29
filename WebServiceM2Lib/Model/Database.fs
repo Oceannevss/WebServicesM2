@@ -1,11 +1,11 @@
-﻿namespace DatabaseFunction
+﻿namespace WebServiceM2Lib.Database
 
 open System
 open Dapper
 open Dapper.FSharp
 open Dapper.FSharp.MySQL
 open MySqlConnector
-open tables
+open WebServiceM2Lib.Mapping.tables
 
 module Database =
 
@@ -42,9 +42,9 @@ module Database =
         task {
             let mappingWorkspaces =
                     table'<Workspaces> "workspace" |> inSchema "workspaces"
-            let transformWorkspace (workspace): Workspaces =
+            let transformWorkspace (w: Workspaces) =
                 { Id = None
-                  Name = workspace.Name
+                  Name = w.Name
                   Creation_date = DateOnly.FromDateTime(DateTime.Now)
                   Members_nbr = 1
                   Groups_nbr = 0
@@ -133,3 +133,94 @@ module Database =
                 | (_, 0) -> 0
                 | _ -> 1
         }
+
+    let getRights (conn: MySqlConnector.MySqlConnection) = 
+        task{
+            let mappingRights =
+                    table'<Permissions> "permission" |> inSchema "workspaces"
+            
+            let! select =
+                select {
+                    for p in mappingRights do
+                    selectAll
+                } |> conn.SelectAsync<Permissions>
+
+            return select
+        }
+
+    let getRightById (conn: MySqlConnector.MySqlConnection) (id)= 
+        task{
+            let mappingRights =
+                    table'<Permissions> "permission" |> inSchema "workspaces"
+            
+            let! select =
+                select {
+                    for p in mappingRights do
+                    where (p.Id = id)
+                } |> conn.SelectAsync<Permissions>
+
+            return select
+        }
+
+    let postRight (conn: MySqlConnector.MySqlConnection)(permission: Permissions) =
+        task {
+            let mappingPermission =
+                    table'<Permissions> "permission" |> inSchema "workspaces"
+            let transformPermission (p: Permissions) =
+                { Id = None
+                  Permission = p.Permission }
+
+            let newPermission = transformPermission permission
+
+            let! insert =
+                insert {
+                    into mappingPermission
+                    value newPermission
+                }
+                |> conn.InsertAsync
+
+            return insert
+        }
+
+    let updateRight (conn: MySqlConnector.MySqlConnection)(right: Permissions) = 
+        task {
+            let mappingRights =
+                    table'<Permissions> "permission" |> inSchema "workspaces"
+            let! update =
+                update {
+                    for p in mappingRights do
+                    setColumn p.Permission right.Permission
+                    where (p.Id = right.Id)
+                }|> conn.UpdateAsync
+
+            return update
+        }
+
+    let deleteRight (conn: MySqlConnector.MySqlConnection)(id: int option) = 
+        task{
+            let mappingRights =
+                    table'<Permissions> "permission" |> inSchema "workspaces"
+            let mappingMembers =
+                    table'<Members> "members"|> inSchema "workspaces"
+
+            let! update =  
+                    update {
+                        for m in mappingMembers do
+                        setColumn m.Id_permission None
+                        where (m.Id_permission = id )
+                    }|> conn.UpdateAsync
+
+            let! delete = 
+                delete {
+                    for r in mappingRights do
+                    where (r.Id = id)
+                }|> conn.DeleteAsync
+
+            return
+                match (update, delete) with
+                | (0, 0)
+                | (0, _)
+                | (_, 0) -> 0
+                | _ -> 1
+        }
+

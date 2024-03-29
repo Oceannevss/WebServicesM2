@@ -24,13 +24,20 @@ module Program =
 
         builder.Services.AddControllers()
 
+        builder.Services.AddEndpointsApiExplorer()
+        builder.Services.AddSwaggerGen()
+
         let app = builder.Build()
+
+        app.UseSwagger()
+        app.UseSwaggerUI()
 
         app.UseHttpsRedirection()
 
         app.UseAuthorization()
+
         app.MapControllers()
 
+        Dapper.FSharp.MySQL.OptionTypes.register()
         app.Run()
-
         exitCode

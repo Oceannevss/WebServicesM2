@@ -23,14 +23,37 @@ module Program =
         let builder = WebApplication.CreateBuilder(args)
 
         builder.Services.AddControllers()
+        //builder.Services.AddApiVersioning( 
+        //    fun v -> 
+        //    v.DefaultApiVersion = new ApiVersion(1.0
+        //    v.AssumeDefaultVersionWhenUnspecified = true
+        //    v.ReportApiVersions = true
+        //).AddApiExplorer(fun ae ->
+        //    ae.GroupNameFormat = "'v'VVV"
+        //    ae.SubstituteApiVersionInUrl = true
+        //    )
+        //builder.Services
+        //    .AddSwaggerGen(fun c ->
+        //        c.IncludeXmlComments(
+        //            IO.Path.Combine(
+        //                AppContext.BaseDirectory,
+        //                Reflection.Assembly.GetEntryAssembly().GetName().Name + ".xml")))
+        //    .AddControllers()
+
+        builder.Services.AddEndpointsApiExplorer()
+        builder.Services.AddSwaggerGen()
 
         let app = builder.Build()
+
+        app.UseSwagger()
+        app.UseSwaggerUI()
 
         app.UseHttpsRedirection()
 
         app.UseAuthorization()
+
         app.MapControllers()
 
+        Dapper.FSharp.MySQL.OptionTypes.register()
         app.Run()
-
         exitCode

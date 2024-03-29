@@ -1,4 +1,4 @@
-﻿namespace Mapping.tables
+﻿namespace WebServiceM2Lib.Mapping.tables
 
 open System
 
@@ -13,7 +13,7 @@ type Groups = {
 
 [<CLIMutable>]
 type Documents = {
-    Id: int
+    Id: int 
     Name: string
     Type: string
     Creation_date: DateOnly
@@ -39,17 +39,17 @@ type WorkspaceGroups = {
 [<CLIMutable>]
 type Members = {
 
-    Id: int
+    Id: int option
     Fistname: string
     Lastname: string
     Mail: string
-    Id_permission: int
+    Id_permission: int option
 }
 
 [<CLIMutable>]
 type Permissions = {
 
-    Id:int
+    Id:int option
     Permission: string 
 }
 

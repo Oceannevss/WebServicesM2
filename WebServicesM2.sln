@@ -6,8 +6,6 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Workspaces", "Workspaces\Workspaces.fsproj", "{6DD53EDD-7CF5-471A-9642-2AF63B46514E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{1BE759D5-875C-4022-8B7B-6A27EACCF6E0} = {1BE759D5-875C-4022-8B7B-6A27EACCF6E0}
-		{84C7A417-7308-48A6-B8B5-311AACBEEE5C} = {84C7A417-7308-48A6-B8B5-311AACBEEE5C}
-		{DC1952E2-14B8-453C-A459-D36572D9F856} = {DC1952E2-14B8-453C-A459-D36572D9F856}
 	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Messaging", "Messaging\Messaging.fsproj", "{DC1952E2-14B8-453C-A459-D36572D9F856}"
@@ -20,7 +18,12 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "RightsManagement", "RightsM
 		{1BE759D5-875C-4022-8B7B-6A27EACCF6E0} = {1BE759D5-875C-4022-8B7B-6A27EACCF6E0}
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "WebServiceM2Lib", "WebServiceM2Lib\WebServiceM2Lib.fsproj", "{1BE759D5-875C-4022-8B7B-6A27EACCF6E0}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "WebServiceM2Lib", "WebServiceM2Lib\WebServiceM2Lib.fsproj", "{1BE759D5-875C-4022-8B7B-6A27EACCF6E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C58B516E-6EBE-4A0B-AA90-132C0AD11C78}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

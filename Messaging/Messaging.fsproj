@@ -8,5 +8,11 @@
     <Compile Include="Controllers/WeatherForecastController.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WebServiceM2Lib\WebServiceM2Lib.fsproj" />
+  </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>

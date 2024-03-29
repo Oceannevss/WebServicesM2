@@ -1,11 +1,11 @@
-﻿module RightsManagementController
+﻿namespace Rights.Controllers
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
-open RightsManagement.tables
 open MySqlConnector
 open Microsoft.AspNetCore.Http
-open Database
+open WebServiceM2Lib.Mapping.tables
+open WebServiceM2Lib.Database
 
 [<ApiController>]
 [<Route("rights")>]
@@ -54,12 +54,12 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
 
     [<HttpPut>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.UpdateRightMember(memberId: int ,rightId: int) =
+    member this.UpdateRight(right: Permissions) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! model = Database.updateRight conn workspace
+                    let! model = Database.updateRight conn right
                     return
                         model
                 with 
@@ -68,11 +68,11 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
 
     [<HttpDelete"{id}">]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.DeleteRightMember(MemberId: int option) =
+    member this.DeleteRight(rightId: int option) =
         task
             {
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                let! model = Database.deleteWorkspaces conn id
+                let! model = Database.deleteWorkspaces conn rightId
                 return
                     model
             }
