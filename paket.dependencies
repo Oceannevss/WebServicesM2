@@ -1,6 +1,0 @@
-source https://api.nuget.org/v3/index.json
-
-storage: none
-nuget Dapper
-nuget Dapper.Extensions.MySQL
-nuget MySqlConnector 2.3.5

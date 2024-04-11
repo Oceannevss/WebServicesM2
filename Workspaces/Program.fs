@@ -1,19 +1,11 @@
 namespace Workspaces
 #nowarn "20"
-open System.Text
 
-open System
-open System.Collections.Generic
-open System.IO
-open System.Linq
-open System.Threading.Tasks
 open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.HttpsPolicy
-open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
+open Workspaces.Controllers
 open Microsoft.Extensions.Logging
 open RabbitMQ.Client
 open RabbitMQ.Client.Events
@@ -50,10 +42,10 @@ module Program =
 
         app.UseHttpsRedirection()
 
-        app.UseAuthorization()
+        //app.UseAuthorization()
 
-        app.MapControllers()
+        //app.MapControllers()
 
-        Dapper.FSharp.MySQL.OptionTypes.register()
+        //Dapper.FSharp.MySQL.OptionTypes.register()
         app.Run()
         exitCode

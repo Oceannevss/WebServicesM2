@@ -1,4 +1,4 @@
-﻿namespace Rights.Controllers
+﻿namespace RightsManagement.Controllers
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
