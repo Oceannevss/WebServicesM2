@@ -1,5 +1,7 @@
 namespace Workspaces
 #nowarn "20"
+open System.Text
+
 open System
 open System.Collections.Generic
 open System.IO
@@ -13,32 +15,30 @@ open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.Logging
+open RabbitMQ.Client
+open RabbitMQ.Client.Events
 
 module Program =
     let exitCode = 0
 
     [<EntryPoint>]
     let main args =
+        //https://github.com/edgarsanchez/FsRabbitMQ-Tutorials/tree/master/src/Receive
+        //let factory = ConnectionFactory (HostName = "localhost")
+        //use connection = factory.CreateConnection ()
+        //use channel = connection.CreateModel ()
+    
+        //channel.QueueDeclare (queue = "hello", durable = false, exclusive = false, autoDelete = false, arguments = null) |> ignore
+        //printfn " [*] Waiting for messages."
+
+        //let consumer = EventingBasicConsumer (channel)
+        //consumer.Received.AddHandler (fun _ ea ->
+        //    let body = ea.Body.ToArray ()
+        //    let message = Encoding.UTF8.GetString body
+        //    printfn " [x] Received %s" message )
+        //channel.BasicConsume (queue = "hello", autoAck = true, consumer = consumer) |> ignore
 
         let builder = WebApplication.CreateBuilder(args)
-
-        builder.Services.AddControllers()
-        //builder.Services.AddApiVersioning( 
-        //    fun v -> 
-        //    v.DefaultApiVersion = new ApiVersion(1.0
-        //    v.AssumeDefaultVersionWhenUnspecified = true
-        //    v.ReportApiVersions = true
-        //).AddApiExplorer(fun ae ->
-        //    ae.GroupNameFormat = "'v'VVV"
-        //    ae.SubstituteApiVersionInUrl = true
-        //    )
-        //builder.Services
-        //    .AddSwaggerGen(fun c ->
-        //        c.IncludeXmlComments(
-        //            IO.Path.Combine(
-        //                AppContext.BaseDirectory,
-        //                Reflection.Assembly.GetEntryAssembly().GetName().Name + ".xml")))
-        //    .AddControllers()
 
         builder.Services.AddEndpointsApiExplorer()
         builder.Services.AddSwaggerGen()

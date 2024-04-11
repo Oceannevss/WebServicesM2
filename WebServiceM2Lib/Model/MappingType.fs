@@ -40,7 +40,7 @@ type WorkspaceGroups = {
 type Members = {
 
     Id: int option
-    Fistname: string
+    Firstname: string
     Lastname: string
     Mail: string
     Id_permission: int option

@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Services\RabbitMQService.fs" />
     <Compile Include="WeatherForecast.fs" />
     <Compile Include="Controllers\MembersController.fs" />
     <Compile Include="Controllers\RightsManagementController.fs" />

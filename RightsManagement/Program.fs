@@ -45,24 +45,24 @@ module Program =
         app.MapControllers()
 
         Dapper.FSharp.MySQL.OptionTypes.register()
-        let factory = new ConnectionFactory()
-        factory.HostName <- "localhost"
-        use connection = factory.CreateConnection()
-        use channel = connection.CreateModel()
+        //let factory = new ConnectionFactory()
+        //factory.HostName <- "localhost"
+        //use connection = factory.CreateConnection()
+        //use channel = connection.CreateModel()
 
-        channel.ExchangeDeclare("logs", ExchangeType.Direct)
+        //channel.ExchangeDeclare("logs", ExchangeType.Direct)
 
-        let queueName = channel.QueueDeclare().QueueName
-        channel.QueueBind(queueName, "logs", String.Empty)
-        Console.WriteLine("[*] Waiting for logs.")
+        //let queueName = channel.QueueDeclare().QueueName
+        //channel.QueueBind(queueName, "logs", String.Empty)
+        //Console.WriteLine("[*] Waiting for logs.")
 
-        let consumer = new EventingBasicConsumer(channel)
-        consumer.Received.Add(fun (model, ea)->
-            let body = ea.Body.ToArray()
-            let message = Encoding.UTF8.GetString(body)
-            printfn " [x] %s" message)
+        //let consumer = new EventingBasicConsumer(channel)
+        //consumer.Received.Add(fun (model, ea)->
+        //    let body = ea.Body.ToArray()
+        //    let message = Encoding.UTF8.GetString(body)
+        //    printfn " [x] %s" message)
 
-        channel.BasicConsume(queueName, true, consumer)
+        //channel.BasicConsume(queueName, true, consumer)
 
         app.Run()
         exitCode

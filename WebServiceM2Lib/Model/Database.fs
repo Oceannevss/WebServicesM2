@@ -184,11 +184,11 @@ module Database =
 
     let updateRight (conn: MySqlConnector.MySqlConnection)(right: Permissions) = 
         task {
-            let mappingRights =
+            let mappingRight =
                     table'<Permissions> "permission" |> inSchema "workspaces"
             let! update =
                 update {
-                    for p in mappingRights do
+                    for p in mappingRight do
                     setColumn p.Permission right.Permission
                     where (p.Id = right.Id)
                 }|> conn.UpdateAsync
@@ -222,5 +222,73 @@ module Database =
                 | (0, _)
                 | (_, 0) -> 0
                 | _ -> 1
+        }
+
+    let getMemberById (conn: MySqlConnector.MySqlConnection) (id)= 
+        task{
+            let mappingMembers =
+                    table'<Members> "members" |> inSchema "workspaces"
+            
+            let! select =
+                select {
+                    for m in mappingMembers do
+                    where (m.Id = id)
+                } |> conn.SelectAsync<Members>
+
+            return select
+        }
+
+    let postMember (conn: MySqlConnector.MySqlConnection)(members: Members) =
+        task {
+            let mappingMembers =
+                    table'<Members> "members" |> inSchema "workspaces"
+            let transformMembers (m: Members) =
+                { Id = None
+                  Firstname = m.Firstname
+                  Lastname = m.Lastname
+                  Mail = m.Mail
+                  Id_permission = None }
+
+            let newMember = transformMembers members
+
+            let! insert =
+                insert {
+                    into mappingMembers
+                    value newMember
+                }
+                |> conn.InsertAsync
+
+            return insert
+        }
+
+    let updateMember (conn: MySqlConnector.MySqlConnection)(members: Members) = 
+        task {
+            let mappingMembers =
+                    table'<Members> "members" |> inSchema "workspaces"
+            let! update =
+                update {
+                    for m in mappingMembers do
+                    setColumn m.Id_permission members.Id_permission
+                    setColumn m.Lastname members.Lastname
+                    setColumn m.Firstname members.Firstname
+                    setColumn m.Mail members.Mail
+                    where (m.Id = members.Id)
+                }|> conn.UpdateAsync
+
+            return update
+        }
+
+    let deleteMember (conn: MySqlConnector.MySqlConnection)(id: int option) = 
+        task{
+            let mappingMembers =
+                    table'<Members> "members"|> inSchema "workspaces"
+
+            let! delete = 
+                delete {
+                    for r in mappingMembers do
+                    where (r.Id = id)
+                }|> conn.DeleteAsync
+
+            return delete
         }
 
