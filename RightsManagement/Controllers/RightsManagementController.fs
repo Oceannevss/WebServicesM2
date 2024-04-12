@@ -2,7 +2,7 @@
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
-open MySqlConnector
+open System.Data.SqlClient
 open Microsoft.AspNetCore.Http
 open WebServiceM2Lib.Mapping.tables
 open WebServiceM2Lib.Database
@@ -21,7 +21,7 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.getRights conn
                     return
                         model
@@ -34,7 +34,7 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.getRightById conn id
                     return
                         model
@@ -48,7 +48,7 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.postRight conn permission
                     return
                         model
@@ -62,7 +62,7 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.updateRight conn right
                     return
                         model
@@ -75,7 +75,7 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
     member this.DeleteRight(rightId: int option) =
         task
             {
-                use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! model = Database.deleteWorkspaces conn rightId
                 return
                     model

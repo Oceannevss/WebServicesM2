@@ -12,6 +12,22 @@ type Groups = {
 }
 
 [<CLIMutable>]
+type Channels = {
+    Id: int option
+    Name: string
+    Id_groups: int option
+}
+
+[<CLIMutable>]
+type Messages = {
+    Id: int option
+    Message: string
+    Creation_date: DateTime
+    Id_channels: int option
+    Id_members: int option
+}
+
+[<CLIMutable>]
 type Documents = {
     Id: int 
     Name: string

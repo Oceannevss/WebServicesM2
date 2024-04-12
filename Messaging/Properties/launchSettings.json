@@ -13,11 +13,11 @@
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
-      "applicationUrl": "https://localhost:7033;http://localhost:5205",
+      "launchUrl": "",
+      "applicationUrl": "https://localhost:8080;http://localhost:5205",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "MyDb": "server=localhost;user=root;password=root;database=workspaces;Allow User Variables=true;port=3306"
+        "MyDb": "Server=tcp:servdb1.database.windows.net,1433;Initial Catalog=workspaces;Persist Security Info=False;User ID=oceannedb;Password=root2024!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       }
     },
     "IIS Express": {

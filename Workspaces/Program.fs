@@ -34,6 +34,7 @@ module Program =
 
         builder.Services.AddEndpointsApiExplorer()
         builder.Services.AddSwaggerGen()
+        builder.Services.AddControllers()
 
         let app = builder.Build()
 
@@ -42,10 +43,11 @@ module Program =
 
         app.UseHttpsRedirection()
 
-        //app.UseAuthorization()
+        app.UseAuthorization()
 
-        //app.MapControllers()
+        app.MapControllers()
 
         //Dapper.FSharp.MySQL.OptionTypes.register()
         app.Run()
+
         exitCode

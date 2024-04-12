@@ -2,7 +2,6 @@
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
-open MySqlConnector
 open Microsoft.AspNetCore.Http
 open WebServiceM2Lib.Mapping.tables
 open WebServiceM2Lib.Database

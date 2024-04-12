@@ -1,4 +1,4 @@
-﻿namespace Workspaces.Controllers
+﻿namespace Messaging.Controllers
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
@@ -9,9 +9,9 @@ open WebServiceM2Lib.Database
 open Asp.Versioning
 
 [<ApiController>]
-[<Route("api/v{version:apiVersion}/workspaces")>]
+[<Route("api/v{version:apiVersion}/channels")>]
 [<ApiVersion("1.0")>]
-type WorkspacesController (logger : ILogger<WorkspacesController>) =
+type ChannelsController (logger : ILogger<ChannelsController>) =
     inherit ControllerBase()
 
     [<HttpGet>]
@@ -19,7 +19,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! get = Database.getWorkspaces conn
+                let! get = Database.getChannel conn
                 return Ok get
             with 
                 | error -> return error |> raise
@@ -30,7 +30,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! getById = Database.getWorkspacesById conn id
+                let! getById = Database.getChannelById conn id
                 return getById
             with 
                 | error -> return error |> raise
@@ -38,11 +38,11 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.PostWorkspace(workspace: Workspaces) =
+    member this.Post(channel: Channels) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! post = Database.postWorkspaces conn workspace
+                let! post = Database.postChannel conn channel
                 return post
             with 
                 | error -> return error |> raise
@@ -50,11 +50,11 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpPut>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.UpdateWorkspace(workspace: Workspaces) =
+    member this.Update(channel: Channels) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! update = Database.updateWorkspaces conn workspace
+                let! update = Database.updateChannel conn channel
                 return update
             with 
                 | error -> return error |> raise
@@ -62,9 +62,9 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpDelete("{id}")>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.DeleteWorkspace(id: int option) =
+    member this.Delete(id: int option) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-            let! delete = Database.deleteWorkspaces conn id
+            let! delete = Database.deleteChannel conn id
             return delete
         }

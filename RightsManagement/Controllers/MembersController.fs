@@ -2,13 +2,15 @@
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
-open MySqlConnector
+open System.Data.SqlClient
 open Microsoft.AspNetCore.Http
 open WebServiceM2Lib.Mapping.tables
 open WebServiceM2Lib.Database
+open Asp.Versioning
 
 [<ApiController>]
-[<Route("members")>]
+[<Route("api/v{version:apiVersion}/members")>]
+[<ApiVersion("1.0")>]
 type MembersController (logger : ILogger<MembersController>) =
     inherit ControllerBase()
 
@@ -17,8 +19,8 @@ type MembersController (logger : ILogger<MembersController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
-                    let! model = Database.getRights conn
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
+                    let! model = Database.getMembers conn
                     return
                         model
                 with 
@@ -30,7 +32,7 @@ type MembersController (logger : ILogger<MembersController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.getMemberById conn id
                     return
                         model
@@ -44,7 +46,7 @@ type MembersController (logger : ILogger<MembersController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.postMember conn members
                     return
                         model
@@ -58,7 +60,7 @@ type MembersController (logger : ILogger<MembersController>) =
         task
             {   
                 try
-                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                    use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.updateMember conn members
                     return
                         model
@@ -71,7 +73,7 @@ type MembersController (logger : ILogger<MembersController>) =
     member this.Delete(id: int option) =
         task
             {
-                use conn = System.Environment.GetEnvironmentVariable("MyDb") |> MySqlConnection
+                use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! model = Database.deleteWorkspaces conn id
                 return
                     model
