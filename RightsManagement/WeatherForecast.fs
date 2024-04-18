@@ -1,4 +1,4 @@
-namespace Workspaces
+namespace RightsManagement
 
 open System
 
