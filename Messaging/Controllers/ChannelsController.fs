@@ -26,7 +26,7 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
         }
 
     [<HttpGet("{id}")>]
-    member this.Get(id: int option) =
+    member this.GetById(id: int32) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
@@ -38,11 +38,11 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.Post(channel: Channels) =
+    member this.Post(channel: Channels) (groupId: int32)=
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! post = Database.postChannel conn channel
+                let! post = Database.postChannel conn channel groupId
                 return post
             with 
                 | error -> return error |> raise
@@ -62,7 +62,7 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
 
     [<HttpDelete("{id}")>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.Delete(id: int option) =
+    member this.Delete(id: int32) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
             let! delete = Database.deleteChannel conn id

@@ -28,7 +28,7 @@ type MembersController (logger : ILogger<MembersController>) =
             }
 
     [<HttpGet"{id}">]
-    member this.Get(id: int option) =
+    member this.Get(id: int32) =
         task
             {   
                 try
@@ -42,12 +42,12 @@ type MembersController (logger : ILogger<MembersController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.Post(members: Members) =
+    member this.Post(members: Members) (permissionid: int32) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                    let! model = Database.postMember conn members
+                    let! model = Database.postMember conn members permissionid
                     return
                         model
                 with 
@@ -70,7 +70,7 @@ type MembersController (logger : ILogger<MembersController>) =
 
     [<HttpDelete"{id}">]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.Delete(id: int option) =
+    member this.Delete(id: int32) =
         task
             {
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection

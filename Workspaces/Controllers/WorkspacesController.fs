@@ -26,7 +26,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
         }
 
     [<HttpGet("{id}")>]
-    member this.Get(id: int option) =
+    member this.Get(id: int32) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
@@ -38,11 +38,12 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.PostWorkspace(workspace: Workspaces) =
+    //member this.PostWorkspace(workspace: Workspaces) =
+    member this.Post (memberId: int32) (workspaceName: string) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! post = Database.postWorkspaces conn workspace
+                let! post = Database.postWorkspaces conn memberId workspaceName//workspace
                 return post
             with 
                 | error -> return error |> raise
@@ -62,7 +63,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
 
     [<HttpDelete("{id}")>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.DeleteWorkspace(id: int option) =
+    member this.DeleteWorkspace(id: int32) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
             let! delete = Database.deleteWorkspaces conn id

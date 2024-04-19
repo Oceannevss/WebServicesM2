@@ -1,6 +1,6 @@
 namespace Workspaces
 #nowarn "20"
-
+open Asp.Versioning
 open Microsoft.AspNetCore
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
@@ -35,6 +35,12 @@ module Program =
         builder.Services.AddEndpointsApiExplorer()
         builder.Services.AddSwaggerGen()
         builder.Services.AddControllers()
+        builder.Services.AddApiVersioning(fun options ->
+            options.DefaultApiVersion <- ApiVersion(1, 0)
+            options.AssumeDefaultVersionWhenUnspecified <- true
+            options.ReportApiVersions <- true
+        )
+        |> ignore
 
         let app = builder.Build()
 
