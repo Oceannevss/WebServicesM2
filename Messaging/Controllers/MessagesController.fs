@@ -26,7 +26,7 @@ type MessagesController (logger : ILogger<MessagesController>) =
         }
 
     [<HttpGet("{id}")>]
-    member this.Get(id: int option) =
+    member this.Get(id: int32) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
@@ -38,11 +38,11 @@ type MessagesController (logger : ILogger<MessagesController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.Post(message: Messages) =
+    member this.Post(message: Messages) (channelid: int32) (memberId: int32)=
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! post = Database.postMessage conn message
+                let! post = Database.postMessage conn message channelid memberId
                 return post
             with 
                 | error -> return error |> raise
@@ -62,7 +62,7 @@ type MessagesController (logger : ILogger<MessagesController>) =
 
     [<HttpDelete("{id}")>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.Delete(id: int option) =
+    member this.Delete(id: int32) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
             let! delete = Database.deleteMessage conn id

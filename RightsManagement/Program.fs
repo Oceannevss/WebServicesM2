@@ -1,5 +1,7 @@
 namespace RightsManagement
 #nowarn "20"
+open Asp.Versioning
+
 open RabbitMQ.Client.Events
 
 open System.Text
@@ -33,6 +35,12 @@ module Program =
 
         builder.Services.AddEndpointsApiExplorer()
         builder.Services.AddSwaggerGen()
+        builder.Services.AddApiVersioning(fun options ->
+            options.DefaultApiVersion <- ApiVersion(1, 0)
+            options.AssumeDefaultVersionWhenUnspecified <- true
+            options.ReportApiVersions <- true
+        )
+        |> ignore
 
         let app = builder.Build()
 

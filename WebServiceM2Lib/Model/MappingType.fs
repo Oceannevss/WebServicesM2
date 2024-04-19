@@ -4,68 +4,68 @@ open System
 
 [<CLIMutable>]
 type Groups = {
-    Id: int option
+    Id: int32 option
     Name: string
     Description: string
     Creation_date: DateOnly
-    Id_workspace: int option
+    Id_workspace: int32
 }
 
 [<CLIMutable>]
 type Channels = {
-    Id: int option
+    Id: int32 option
     Name: string
-    Id_groups: int option
+    Id_groups: int32
 }
 
 [<CLIMutable>]
 type Messages = {
-    Id: int option
+    Id: int32 option
     Message: string
     Creation_date: DateTime
-    Id_channels: int option
-    Id_members: int option
+    Id_channels: int32
+    Id_members: int32
 }
 
 [<CLIMutable>]
 type Documents = {
-    Id: int 
+    Id: int32 option 
     Name: string
     Type: string
-    Creation_date: DateOnly
-    Id_members: int
+    Creation_date: DateTime
+    Id_members: int32
 }
 
 [<CLIMutable>]
 type Workspaces = {
-    Id: int option
+    Id: int32 option
     Name: string
-    Creation_date: DateOnly
-    Members_nbr: int
-    Groups_nbr: int
-    Id_creator: int option
+    Creation_date: DateTime
+    Members_nbr: int32
+    Groups_nbr: int32
+    Id_creator: int32
 }
 
 [<CLIMutable>]
 type WorkspaceGroups = {
-    Id_workspace: int option
-    Id_group: int option
+    Id_workspace: int32 
+    Id_group: int32
 }
 
 [<CLIMutable>]
 type Members = {
 
-    Id: int option
+    Id: int32 option
     Firstname: string
     Lastname: string
     Mail: string
-    Id_permission: int option
+    Id_permission: int32
 }
 
 [<CLIMutable>]
 type Permissions = {
 
-    Id:int option
+    Id: int32 option
     Permission: string 
 }
 
