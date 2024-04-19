@@ -3,13 +3,8 @@ namespace Messaging
 open Asp.Versioning
 
 open Microsoft.AspNetCore.Builder
-open Microsoft.AspNetCore.Hosting
-open Microsoft.AspNetCore.HttpsPolicy
-open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
-open Microsoft.Extensions.Logging
-open Swashbuckle.AspNetCore
 
 module Program =
     let exitCode = 0
