@@ -9,7 +9,7 @@ open WebServiceM2Lib.Database
 open Asp.Versioning
 
 [<ApiController>]
-[<Route("api/v{version:apiVersion}/channels")>]
+[<Route("api/v1.0/channels")>]
 [<ApiVersion("1.0")>]
 type ChannelsController (logger : ILogger<ChannelsController>) =
     inherit ControllerBase()
@@ -20,7 +20,7 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! get = Database.getChannel conn
-                return Ok get
+                return get
             with 
                 | error -> return error |> raise
         }
@@ -38,12 +38,15 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.Post(channel: Channels) (groupId: int32)=
+    member this.Post(channelName: string) (groupId: int32)=
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! post = Database.postChannel conn channel groupId
-                return post
+                let! post = Database.postChannel conn channelName groupId
+                if post = 1 then
+                    return StatusCodeResult(201)
+                else
+                    return StatusCodeResult(400)
             with 
                 | error -> return error |> raise
         }
@@ -55,7 +58,10 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! update = Database.updateChannel conn channel
-                return update
+                if update = 1 then
+                    return StatusCodeResult(204)
+                else
+                    return StatusCodeResult(400)
             with 
                 | error -> return error |> raise
         }
@@ -66,5 +72,8 @@ type ChannelsController (logger : ILogger<ChannelsController>) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
             let! delete = Database.deleteChannel conn id
-            return delete
+            if delete = 1 then
+                    return StatusCodeResult(204)
+                else
+                    return StatusCodeResult(400)
         }

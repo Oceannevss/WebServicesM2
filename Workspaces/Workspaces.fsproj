@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Controllers\GroupsController.fs" />
     <Compile Include="Controllers\TestController.fs" />
     <Compile Include="Controllers\WorkspacesController.fs" />
     <Compile Include="Program.fs" />

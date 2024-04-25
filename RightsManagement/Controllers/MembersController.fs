@@ -9,7 +9,7 @@ open WebServiceM2Lib.Database
 open Asp.Versioning
 
 [<ApiController>]
-[<Route("api/v{version:apiVersion}/members")>]
+[<Route("api/v1.0/members")>]
 [<ApiVersion("1.0")>]
 type MembersController (logger : ILogger<MembersController>) =
     inherit ControllerBase()
@@ -42,39 +42,45 @@ type MembersController (logger : ILogger<MembersController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.Post(members: Members) (permissionid: int32) =
+    member this.Post(members: Members) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                    let! model = Database.postMember conn members permissionid
-                    return
-                        model
+                    let! model = Database.postMember conn members
+                    if model = 1 then
+                        return StatusCodeResult(201)
+                    else
+                        return StatusCodeResult(400)
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpPut>]
-    [<ProducesResponseType(StatusCodes.Status200OK)>]
+    [<ProducesResponseType(StatusCodes.Status204NoContent)>]
     member this.Update(members: Members) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.updateMember conn members
-                    return
-                        model
+                    if model = 1 then
+                        return StatusCodeResult(204)
+                    else
+                        return StatusCodeResult(400)
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpDelete"{id}">]
-    [<ProducesResponseType(StatusCodes.Status200OK)>]
+    [<ProducesResponseType(StatusCodes.Status204NoContent)>]
     member this.Delete(id: int32) =
         task
             {
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! model = Database.deleteWorkspaces conn id
-                return
-                    model
+                let! model = Database.deleteMember conn id
+                if model = 1 then
+                        return StatusCodeResult(204)
+                    else
+                        return StatusCodeResult(400)
             }

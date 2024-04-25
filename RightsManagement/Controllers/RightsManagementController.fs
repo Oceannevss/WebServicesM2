@@ -13,11 +13,12 @@ open System.Text
 open Asp.Versioning
 
 [<ApiController>]
-[<Route("api/v{version:apiVersion}/rights")>]
+[<Route("api/v1.0/rights")>]
 [<ApiVersion("1.0")>]
 type RightsManagementController (logger : ILogger<RightsManagementController>) =
     inherit ControllerBase()
 
+    [<MapToApiVersion("1.0")>]
     [<HttpGet>]
     member this.Get() =
         task
@@ -38,8 +39,7 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.getRightById conn id
-                    return
-                        model
+                    return model
                 with 
                     | error -> return error |> raise
             }
@@ -52,33 +52,40 @@ type RightsManagementController (logger : ILogger<RightsManagementController>) =
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.postRight conn permission
-                    return
-                        model
+                    if model = 1 then
+                        return StatusCodeResult(201)
+                    else
+                        return StatusCodeResult(400)
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpPut>]
-    [<ProducesResponseType(StatusCodes.Status200OK)>]
+    [<ProducesResponseType(StatusCodes.Status204NoContent)>]
     member this.UpdateRight(right: Permissions) =
         task
             {   
                 try
                     use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                     let! model = Database.updateRight conn right
-                    return
-                        model
+                    if model = 1 then
+                        return StatusCodeResult(204)
+                    else
+                        return StatusCodeResult(400)
+                    
                 with 
                     | error -> return error |> raise
             }
 
     [<HttpDelete"{id}">]
-    [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.DeleteRight(rightId: int32) =
+    [<ProducesResponseType(StatusCodes.Status204NoContent)>]
+    member this.DeleteRight(id: int32) =
         task
             {
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! model = Database.deleteWorkspaces conn rightId
-                return
-                    model
+                let! model = Database.deleteRight conn id
+                if model = 1 then
+                        return StatusCodeResult(204)
+                    else
+                        return StatusCodeResult(400)
             }

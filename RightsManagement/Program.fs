@@ -33,19 +33,31 @@ module Program =
 
         builder.Services.AddControllers()
 
-        builder.Services.AddEndpointsApiExplorer()
-        builder.Services.AddSwaggerGen()
         builder.Services.AddApiVersioning(fun options ->
             options.DefaultApiVersion <- ApiVersion(1, 0)
             options.AssumeDefaultVersionWhenUnspecified <- true
             options.ReportApiVersions <- true
+            
         )
-        |> ignore
+        
+        builder.Services.AddEndpointsApiExplorer()
+        builder.Services.AddSwaggerGen(fun options ->
+            options.SwaggerDoc("v1.0", new Microsoft.OpenApi.Models.OpenApiInfo(Title = "Titre", Version = "1.0", Description = "Description"))
+        )
+
+        //|> ignore
 
         let app = builder.Build()
 
-        app.UseSwagger()
-        app.UseSwaggerUI()
+        app.UseSwagger(fun options ->
+            options.SerializeAsV2 <- true
+        )
+        app.UseSwaggerUI(fun options -> 
+            options.DocumentTitle <- "Titre"
+            options.SwaggerEndpoint("/swagger/v1.0/swagger.json", "v1.0")
+            //options.DisplayOperationId()
+            //options.DisplayRequestDuration()
+        )
 
         app.UseHttpsRedirection()
 
@@ -53,7 +65,7 @@ module Program =
 
         app.MapControllers()
 
-        Dapper.FSharp.MySQL.OptionTypes.register()
+        Dapper.FSharp.MSSQL.OptionTypes.register()
         //let factory = new ConnectionFactory()
         //factory.HostName <- "localhost"
         //use connection = factory.CreateConnection()

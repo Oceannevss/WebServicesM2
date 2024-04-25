@@ -2,8 +2,7 @@
 
 open System
 open Dapper
-open Dapper.FSharp
-open Dapper.FSharp.MySQL
+open Dapper.FSharp.MSSQL
 open System.Data.SqlClient
 open WebServiceM2Lib.Mapping.tables
 
@@ -31,22 +30,20 @@ module Database =
             let! select =
                 select {
                     for w in mappingWorkspaces do
-                    where (w.Id = Some id)
+                    where (w.Id = id)
                 } |> conn.SelectAsync<Workspaces>
 
             return select
         }
         
-
-    //let postWorkspaces (conn: SqlConnection)(workspace: Workspaces) =
     let postWorkspaces (conn: SqlConnection) (memberId: int32) (name: string) =
         task {
             let mappingWorkspaces =
                     table'<Workspaces> "workspace" |> inSchema "workspaces"
 
-            let transformWorkspace (mId: int32) (name: string) : Workspaces =
-                { Id = None
-                  Name = name
+            let transformWorkspace (mId: int32) (n: string) : Workspaces =
+                { Id = 0
+                  Name = n
                   Creation_date = DateTime.UtcNow.Date
                   Members_nbr = 1
                   Groups_nbr = 0
@@ -56,8 +53,9 @@ module Database =
 
             let! insert =
                 insert {
-                    into mappingWorkspaces
+                    for w in mappingWorkspaces do
                     value newWorkspace
+                    excludeColumn w.Id
                 }
                 |> conn.InsertAsync
 
@@ -74,13 +72,11 @@ module Database =
                         setColumn w.Name input.Name
                         where (w.Id = input.Id )
                 } |> conn.UpdateAsync
-                  |> Async.AwaitTask
-                  |> Async.RunSynchronously
 
             return update
         }
 
-    let updateWorspacesGroup (conn: SqlConnection)(newGroupNbr: int)(workspaceId: int option) =
+    let updateWorspacesGroup (conn: SqlConnection)(newGroupNbr: int32)(workspaceId: int32) =
         task {
             let mappingWorkspaces =
                     table'<Workspaces> "workspace" |> inSchema "workspaces"
@@ -90,8 +86,6 @@ module Database =
                         setColumn w.Groups_nbr newGroupNbr
                         where (w.Id = workspaceId )
                 } |> conn.UpdateAsync
-                  |> Async.AwaitTask
-                  |> Async.RunSynchronously
 
             return update
         }
@@ -100,40 +94,124 @@ module Database =
         task{
             let mappingWorkspaces =
                     table'<Workspaces> "workspace" |> inSchema "workspaces"
-            //let mappingGroups =
-            //        table'<Groups> "groups" |> inSchema "workspaces"
-            let mappingWG = 
-                    table'<WorkspaceGroups> "workspace_groups"|> inSchema "workspaces"
+            let mappingGroups =
+                    table'<Groups> "groups" |> inSchema "workspaces"
 
             //let parameters = new DynamicParameters()
             //parameters.Add("@id_workspace", id)
             //let selectSql = "SELECT * FROM workspace_group WHERE id_workspace = @id_workspace ; "
             //let groups = conn.Query<WorkspaceGroups>(selectSql, id).AsList()
             
-            let! deleteGroupsFromWorkspace, deleteWorkspace =
+            let! deleteGroupsFromworkspace, deleteWorkspace =
                 task{
-                    let! deleteGroupsFromWorkspace =
+                    let! deleteGroupsFromworkspace =
                         delete {
-                            for wg in mappingWG do
-                            where (wg.Id_workspace = id )
+                            for g in mappingGroups do
+                            where (g.Id_workspace = id )
                         } |> conn.DeleteAsync
             
                     let! deleteWorkspace =
                         delete {
                             for w in mappingWorkspaces do
-                            where (w.Id = Some id)
+                            where (w.Id = id)
                         } |> conn.DeleteAsync
 
-                    return deleteGroupsFromWorkspace, deleteWorkspace
+                    return deleteGroupsFromworkspace, deleteWorkspace
                 }
 
             return
 
-                match (deleteGroupsFromWorkspace, deleteWorkspace) with
+                match (deleteGroupsFromworkspace, deleteWorkspace) with
                 | (0, 0)
                 | (0, _)
-                | (_, 0) -> 0
+                | (_, 0)
                 | _ -> 1
+
+        }
+
+    let getGroups (conn: SqlConnection) = 
+        task{
+            let mappingGroups =
+                    table'<Groups> "groups" |> inSchema "workspaces"
+            
+            let! select =
+                select {
+                    for w in mappingGroups do
+                    selectAll
+                } |> conn.SelectAsync<Groups>
+
+            return select
+        }
+
+    let getGroupById (conn: SqlConnection) (id)= 
+        task{
+            let mappingGroups =
+                    table'<Groups> "groups" |> inSchema "workspaces"
+            
+            let! select =
+                select {
+                    for g in mappingGroups do
+                    where (g.Id = id)
+                } |> conn.SelectAsync<Groups>
+
+            return select
+        }
+        
+    let postGroups (conn: SqlConnection) (new_group: Groups) =
+        task {
+            let mappingGroups =
+                    table'<Groups> "groups" |> inSchema "workspaces"
+
+            let transformGroup (g: Groups) =
+                { Id = 0
+                  Name = g.Name
+                  Description = g.Description
+                  Creation_date = DateTime.UtcNow.Date
+                  Id_workspace = g.Id_workspace
+                  Groupscol = ""}
+
+            let newGroup = transformGroup new_group
+
+            
+            let! insert =
+                insert {
+                    for g in mappingGroups do
+                    value newGroup
+                    excludeColumn g.Id
+                }
+                |> conn.InsertAsync
+
+            return insert
+        }
+
+    let updateGroups (conn: SqlConnection)(input: Groups) =
+        task {
+            let mappingGroups =
+                    table'<Groups> "groups" |> inSchema "workspaces"
+            let update = 
+                update {
+                    for g in mappingGroups do
+                        setColumn g.Name input.Name
+                        setColumn g.Description input.Description
+                        where (g.Id = input.Id )
+                } |> conn.UpdateAsync
+
+            return update
+        }
+
+    let deleteGroups (conn: SqlConnection)(id: int32) = 
+        task{
+            let mappingGroups =
+                    table'<Groups> "groups" |> inSchema "workspaces"
+           
+            let! delete =
+                delete {
+                    for g in mappingGroups do
+                    where (g.Id = id)
+                } |> conn.DeleteAsync
+
+            return delete
+
         }
 
     let getRights (conn: SqlConnection) = 
@@ -158,7 +236,7 @@ module Database =
             let! select =
                 select {
                     for p in mappingRights do
-                    where (p.Id = Some id)
+                    where (p.Id = id)
                 } |> conn.SelectAsync<Permissions>
 
             return select
@@ -169,15 +247,16 @@ module Database =
             let mappingPermission =
                     table'<Permissions> "permission" |> inSchema "workspaces"
             let transformPermission (p: Permissions) =
-                { Id = None
+                { Id = 0
                   Permission = p.Permission }
 
             let newPermission = transformPermission permission
 
             let! insert =
                 insert {
-                    into mappingPermission
+                    for p in mappingPermission do
                     value newPermission
+                    excludeColumn p.Id
                 }
                 |> conn.InsertAsync
 
@@ -208,14 +287,14 @@ module Database =
             let! update =  
                     update {
                         for m in mappingMembers do
-                        setColumn m.Id_permission 0
+                        setColumn m.Id_permission None.Value
                         where (m.Id_permission = id )
                     }|> conn.UpdateAsync
 
             let! delete = 
                 delete {
                     for r in mappingRights do
-                    where (r.Id = Some id)
+                    where (r.Id = id)
                 }|> conn.DeleteAsync
 
             return
@@ -248,29 +327,30 @@ module Database =
             let! select =
                 select {
                     for m in mappingMembers do
-                    where (m.Id = Some id)
+                    where (m.Id = id)
                 } |> conn.SelectAsync<Members>
 
             return select
         }
 
-    let postMember (conn: SqlConnection)(members: Members) (permissionId: int32) =
+    let postMember (conn: SqlConnection)(members: Members) =
         task {
             let mappingMembers =
                     table'<Members> "members" |> inSchema "workspaces"
-            let transformMembers (m: Members) (pId: int32) =
-                { Id = None
+            let transformMembers (m: Members) =
+                { Id = 0
                   Firstname = m.Firstname
                   Lastname = m.Lastname
                   Mail = m.Mail
-                  Id_permission = pId }
+                  Id_permission = m.Id_permission }
 
-            let newMember = transformMembers members permissionId
+            let newMember = transformMembers members
 
             let! insert =
                 insert {
-                    into mappingMembers
+                    for m in mappingMembers do
                     value newMember
+                    excludeColumn m.Id
                 }
                 |> conn.InsertAsync
 
@@ -302,7 +382,7 @@ module Database =
             let! delete = 
                 delete {
                     for r in mappingMembers do
-                    where (r.Id = Some id)
+                    where (r.Id = id)
                 }|> conn.DeleteAsync
 
             return delete
@@ -330,47 +410,47 @@ module Database =
             let! select =
                 select {
                     for m in mappingMessages do
-                    where (m.Id = Some id)
+                    where (m.Id = id)
                 } |> conn.SelectAsync<Messages>
 
             return select
         }
 
-    let postMessage (conn: SqlConnection)(message: Messages) (channelid: int32) (memberId: int32) =
+    let postMessage (conn: SqlConnection)(message: string) (channelid: int32) (memberId: int32) =
         task {
             let mappingMessages =
                     table'<Messages> "messages" |> inSchema "workspaces"
-            let transformMessages (m: Messages) (cId: int32) (mId: int32) =
-                { Id = None
-                  Message = m.Message
+            let transformMessages (m: string) (cId: int32) (mId: int32) =
+                { Id = 0
+                  Message = m
                   Creation_date = DateTime.UtcNow
                   Id_channels = cId
                   Id_members = mId
                 }
 
-
             let newMessage = transformMessages message channelid memberId
 
             let! insert =
                 insert {
-                    into mappingMessages
+                    for m in mappingMessages do
                     value newMessage
+                    excludeColumn m.Id
                 }
                 |> conn.InsertAsync
 
             return insert
         }
 
-    let updateMessage (conn: SqlConnection)(message: Messages) = 
+    let updateMessage (conn: SqlConnection)(message: string) (messageId: int32) = 
         task {
             let mappingMessages =
                     table'<Messages> "messages" |> inSchema "workspaces"
             let! update =
                 update {
                     for m in mappingMessages do
-                    setColumn m.Message message.Message
+                    setColumn m.Message message
                     setColumn m.Creation_date DateTime.UtcNow
-                    where (m.Id = message.Id)
+                    where (m.Id = messageId)
                 }|> conn.UpdateAsync
 
             return update
@@ -384,7 +464,7 @@ module Database =
             let! delete = 
                 delete {
                     for m in mappingMessages do
-                    where (m.Id = Some id)
+                    where (m.Id = id)
                 }|> conn.DeleteAsync
 
             return delete
@@ -412,28 +492,29 @@ module Database =
             let! select =
                 select {
                     for c in mappingChannels do
-                    where (c.Id = Some id)
+                    where (c.Id = id)
                 } |> conn.SelectAsync<Channels>
 
             return select
         }
 
-    let postChannel (conn: SqlConnection)(channel: Channels) (groupId: int32) =
+    let postChannel (conn: SqlConnection)(channelName: string) (groupId: int32) =
         task {
             let mappingChannels =
                     table'<Channels> "channels" |> inSchema "workspaces"
-            let transformChannel (c: Channels) (gId: int32)=
-                { Id = None
-                  Name = c.Name
+            let transformChannel (c: string) (gId: int32)=
+                { Id = 0
+                  Name = c
                   Id_groups = gId
                 }
 
-            let newChannel = transformChannel channel groupId
+            let newChannel = transformChannel channelName groupId
 
             let! insert =
                 insert {
-                    into mappingChannels
+                    for c in mappingChannels do
                     value newChannel
+                    excludeColumn c.Id
                 }
                 |> conn.InsertAsync
 
@@ -459,13 +540,33 @@ module Database =
         task{
             let mappingChannels =
                     table'<Channels> "channels" |> inSchema "workspaces"
+            let mappingMessages =
+                    table'<Messages> "messages" |> inSchema "workspaces"
 
-            let! delete = 
-                delete {
-                    for c in mappingChannels do
-                    where (c.Id = Some id)
-                }|> conn.DeleteAsync
+            let! deleteMessageFromChannel, deleteChannel =
+                task{
+                    let! deleteMessageFromChannel =
+                        delete {
+                            for m in mappingMessages do
+                            where (m.Id_channels = id )
+                        } |> conn.DeleteAsync
+            
+                    let! deleteChannel = 
+                        delete {
+                            for c in mappingChannels do
+                            where (c.Id = id)
+                        }|> conn.DeleteAsync
 
-            return delete
+                    return deleteMessageFromChannel, deleteChannel
+                }
+
+            return
+
+                match (deleteMessageFromChannel, deleteChannel) with
+                | (0, 0)
+                | (0, _)
+                | (_, 0)
+                | _ -> 1
+
         }
 

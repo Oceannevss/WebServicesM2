@@ -9,7 +9,7 @@ open WebServiceM2Lib.Database
 open Asp.Versioning
 
 [<ApiController>]
-[<Route("api/v{version:apiVersion}/workspaces")>]
+[<Route("api/v1.0/workspaces")>]
 [<ApiVersion("1.0")>]
 type WorkspacesController (logger : ILogger<WorkspacesController>) =
     inherit ControllerBase()
@@ -20,7 +20,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! get = Database.getWorkspaces conn
-                return Ok get
+                return get
             with 
                 | error -> return error |> raise
         }
@@ -44,7 +44,7 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! post = Database.postWorkspaces conn memberId workspaceName//workspace
-                return post
+                return CreatedResult("", post)
             with 
                 | error -> return error |> raise
         }
@@ -56,7 +56,10 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
                 let! update = Database.updateWorkspaces conn workspace
-                return update
+                if update.Result = 1 then
+                    return StatusCodeResult(204)
+                else
+                    return StatusCodeResult(400)
             with 
                 | error -> return error |> raise
         }
@@ -67,5 +70,8 @@ type WorkspacesController (logger : ILogger<WorkspacesController>) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
             let! delete = Database.deleteWorkspaces conn id
-            return delete
+            if delete = 1 then
+                    return StatusCodeResult(204)
+                else
+                    return StatusCodeResult(400)
         }

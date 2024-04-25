@@ -36,7 +36,7 @@ module Program =
 
         app.MapControllers()
 
-        Dapper.FSharp.MySQL.OptionTypes.register()
+        Dapper.FSharp.MSSQL.OptionTypes.register()
         app.Run()
 
         exitCode
