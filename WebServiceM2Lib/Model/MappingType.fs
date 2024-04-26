@@ -4,23 +4,24 @@ open System
 
 [<CLIMutable>]
 type Groups = {
-    Id: int32 option
+    Id: int32 
     Name: string
     Description: string
-    Creation_date: DateOnly
+    Creation_date: DateTime
     Id_workspace: int32
+    Groupscol: string
 }
 
 [<CLIMutable>]
 type Channels = {
-    Id: int32 option
+    Id: int32
     Name: string
     Id_groups: int32
 }
 
 [<CLIMutable>]
 type Messages = {
-    Id: int32 option
+    Id: int32 
     Message: string
     Creation_date: DateTime
     Id_channels: int32
@@ -29,7 +30,7 @@ type Messages = {
 
 [<CLIMutable>]
 type Documents = {
-    Id: int32 option 
+    Id: int32 
     Name: string
     Type: string
     Creation_date: DateTime
@@ -38,7 +39,7 @@ type Documents = {
 
 [<CLIMutable>]
 type Workspaces = {
-    Id: int32 option
+    Id: int32 
     Name: string
     Creation_date: DateTime
     Members_nbr: int32
@@ -55,7 +56,7 @@ type WorkspaceGroups = {
 [<CLIMutable>]
 type Members = {
 
-    Id: int32 option
+    Id: int32
     Firstname: string
     Lastname: string
     Mail: string
@@ -65,7 +66,7 @@ type Members = {
 [<CLIMutable>]
 type Permissions = {
 
-    Id: int32 option
+    Id: int32
     Permission: string 
 }
 

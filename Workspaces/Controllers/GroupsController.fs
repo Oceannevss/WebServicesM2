@@ -1,4 +1,4 @@
-﻿namespace Messaging.Controllers
+﻿namespace Workspaces.Controllers
 
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
@@ -9,9 +9,9 @@ open WebServiceM2Lib.Database
 open Asp.Versioning
 
 [<ApiController>]
-[<Route("api/v1.0/messages")>]
+[<Route("api/v1.0/groups")>]
 [<ApiVersion("1.0")>]
-type MessagesController (logger : ILogger<MessagesController>) =
+type GroupsController (logger : ILogger<GroupsController>) =
     inherit ControllerBase()
 
     [<HttpGet>]
@@ -19,7 +19,7 @@ type MessagesController (logger : ILogger<MessagesController>) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! get = Database.getMessages conn
+                let! get = Database.getGroups conn
                 return get
             with 
                 | error -> return error |> raise
@@ -30,7 +30,7 @@ type MessagesController (logger : ILogger<MessagesController>) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! getById = Database.getMessageById conn id
+                let! getById = Database.getChannelById conn id
                 return getById
             with 
                 | error -> return error |> raise
@@ -38,27 +38,24 @@ type MessagesController (logger : ILogger<MessagesController>) =
 
     [<HttpPost>]
     [<ProducesResponseType(StatusCodes.Status201Created)>]
-    member this.Post(message: string) (channelId: int32) (memberId: int32)=
+    member this.Post (group: Groups) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! post = Database.postMessage conn message channelId memberId
-                if post = 1 then
-                    return StatusCodeResult(201)
-                else
-                    return StatusCodeResult(400)
+                let! post = Database.postGroups conn group
+                return CreatedResult("", post)
             with 
                 | error -> return error |> raise
         }
 
     [<HttpPut>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.Update(message: string) (messageId: int32) =
+    member this.UpdateWorkspace(group: Groups) =
         task {
             try
                 use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-                let! update = Database.updateMessage conn message messageId
-                if update = 1 then
+                let! update = Database.updateGroups conn group
+                if update.Result = 1 then
                     return StatusCodeResult(204)
                 else
                     return StatusCodeResult(400)
@@ -68,10 +65,10 @@ type MessagesController (logger : ILogger<MessagesController>) =
 
     [<HttpDelete("{id}")>]
     [<ProducesResponseType(StatusCodes.Status200OK)>]
-    member this.Delete(id: int32) =
+    member this.DeleteWorkspace(id: int32) =
         task {
             use conn = System.Environment.GetEnvironmentVariable("MyDb") |> SqlConnection
-            let! delete = Database.deleteMessage conn id
+            let! delete = Database.deleteGroups conn id
             if delete = 1 then
                     return StatusCodeResult(204)
                 else
