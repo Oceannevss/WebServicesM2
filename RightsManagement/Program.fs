@@ -42,10 +42,8 @@ module Program =
         
         builder.Services.AddEndpointsApiExplorer()
         builder.Services.AddSwaggerGen(fun options ->
-            options.SwaggerDoc("v1.0", new Microsoft.OpenApi.Models.OpenApiInfo(Title = "Titre", Version = "1.0", Description = "Description"))
+            options.SwaggerDoc("v1.0", new Microsoft.OpenApi.Models.OpenApiInfo(Title = "Right Management Api", Version = "1.0", Description = "Cette api gère les droit et les utilisateurs"))
         )
-
-        //|> ignore
 
         let app = builder.Build()
 
@@ -53,10 +51,8 @@ module Program =
             options.SerializeAsV2 <- true
         )
         app.UseSwaggerUI(fun options -> 
-            options.DocumentTitle <- "Titre"
+            options.DocumentTitle <- "Right Management Api"
             options.SwaggerEndpoint("/swagger/v1.0/swagger.json", "v1.0")
-            //options.DisplayOperationId()
-            //options.DisplayRequestDuration()
         )
 
         app.UseHttpsRedirection()
